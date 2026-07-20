@@ -113,7 +113,8 @@ def main() -> int:
         return 2
 
     print(f"Профилей: {len(accounts)}")
-    print(f"Webhook: {url}")
+    safe_url = f"{url.rsplit('/', 1)[0]}/<secret>"
+    print(f"Webhook: {safe_url}")
     if args.dry_run:
         print("Конфигурация корректна; запросы в Avito не отправлялись.")
         return 0
@@ -136,4 +137,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
