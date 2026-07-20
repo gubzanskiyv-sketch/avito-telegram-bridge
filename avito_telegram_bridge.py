@@ -240,10 +240,18 @@ def make_handler(config: Config, events: queue.Queue[str], dedupe: EventDeduplic
             self.wfile.write(data)
 
         def do_GET(self) -> None:  # noqa: N802
-            if self.path == "/health":
+            if urllib.parse.urlsplit(self.path).path == "/health":
                 self.send_json(200, {"ok": True, "queue_depth": events.qsize()})
             else:
                 self.send_json(404, {"ok": False})
+
+        def do_HEAD(self) -> None:  # noqa: N802
+            if urllib.parse.urlsplit(self.path).path == "/health":
+                self.send_response(200)
+            else:
+                self.send_response(404)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
 
         def do_POST(self) -> None:  # noqa: N802
             if urllib.parse.urlsplit(self.path).path != expected_path:
